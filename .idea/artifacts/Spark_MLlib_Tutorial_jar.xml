@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Spark-MLlib-Tutorial:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Spark_MLlib_Tutorial_jar</output-path>
+    <root id="archive" name="Spark-MLlib-Tutorial.jar">
+      <element id="module-output" name="Spark-MLlib-Tutorial" />
+    </root>
+  </artifact>
+</component>
