@@ -1,5 +1,5 @@
-import org.apache.spark.ml.classification.LogisticRegression
 import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.ml.regression.LinearRegression
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -29,26 +29,14 @@ object Main {
 
     // 训练集， 测试集
     val Array(train, test) = dataset.randomSplit(Array(0.8, 0.2)) //拆分成训练数据集和测试数据集
-    /*
-  //val lr = new LinearRegression().setStandardization(true).setMaxIter(10)
-    .setFeaturesCol("features")
-    .setLabelCol("price")
-  //创建一个对象
-  val model = lr.fit(train) //训练
 
-  model.transform(test).show()
-  */
-    // 监督学习需要提供标签
-    val lr = new LogisticRegression().setLabelCol("price").setFeaturesCol("features")
-      .setRegParam(0.3).setElasticNetParam(0.8).setMaxIter(10)
-    val model = lr.fit(train)
+    val lr = new LinearRegression().setStandardization(true).setMaxIter(10)
+      .setFeaturesCol("features")
+      .setLabelCol("price")
+    //创建一个对象
+    val model = lr.fit(train) //训练
+
     model.transform(test).show()
 
-    /**
-      * fit 做训练
-      * transform 做预测
-      */
-    val s = model.summary.totalIterations
-    println(s"iter: ${s}")
   }
 }
