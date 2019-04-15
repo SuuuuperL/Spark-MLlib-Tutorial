@@ -1,7 +1,7 @@
 import org.apache.spark.SparkContext
 
 /**
-  * @author sss
+  * @author JavaEdge
   * @date 2019-04-09
   *
   */
