@@ -1,7 +1,8 @@
 package iris
 
 import org.apache.spark.SparkConf
-import org.apache.spark.ml.classification.LinearSVC
+import org.apache.spark.ml.classification.DecisionTreeClassifier
+import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.sql.SparkSession
 
@@ -17,14 +18,13 @@ object Main {
 
     val conf = new SparkConf().setMaster("local").setAppName("iris")
     val spark = SparkSession.builder().config(conf).getOrCreate()
-    spark.sparkContext.setLogLevel("WARN") ///日志级别
+    spark.sparkContext.setLogLevel("WARN")
 
     val file = spark.read.format("csv").load("iris.data")
 
     import spark.implicits._
     val random = new Random()
     val data = file.map(row => {
-      // 将列标签替换为数字
       val label = row.getString(4) match {
         case "Iris-setosa" => 0
         case "Iris-versicolor" => 1
@@ -38,18 +38,22 @@ object Main {
         label,
         random.nextDouble())
     }).toDF("_c0", "_c1", "_c2", "_c3", "label", "rand").sort("rand")
-      .where("label = 1 or label = 0")
 
     val assembler = new VectorAssembler().setInputCols(Array("_c0", "_c1", "_c2", "_c3")).setOutputCol("features")
 
     val dataset = assembler.transform(data)
     val Array(train, test) = dataset.randomSplit(Array(0.8, 0.2))
 
-    // SVM
-    val svm = new LinearSVC().setMaxIter(20).setRegParam(0.1)
-      .setFeaturesCol("features").setLabelCol("label")
-    val model = svm.fit(train)
-    model.transform(test).show()
+    val dt = new DecisionTreeClassifier().setFeaturesCol("features").setLabelCol("label")
+    val model = dt.fit(train)
+    val result = model.transform(test)
+    result.show()
+    val evaluator = new MulticlassClassificationEvaluator()
+      .setLabelCol("label")
+      .setPredictionCol("prediction")
+      .setMetricName("accuracy")
+    val accuracy = evaluator.evaluate(result)
+    println(s"""accuracy is $accuracy""")
   }
 }
 
