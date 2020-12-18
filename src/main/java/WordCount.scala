@@ -1,3 +1,5 @@
+import java.util.Properties
+
 import org.apache.spark.SparkContext
 
 /**
@@ -10,7 +12,8 @@ object WordCount {
   def main(args: Array[String]): Unit = {
     val sc = new SparkContext("local", "WordCount")
 
-    val file = sc.textFile("/Volumes/doc/spark-2.4.1-bin-hadoop2.7/LICENSE")
+    val file1 = WordCount.getClass.getClassLoader.getResource("pos.txt").getFile
+    val file = sc.textFile(file1)
 
     // 先分割成单词数组，然后合并，再与1形成KV映射
     val result = file.flatMap(_.split(" ")).map((_, 1)).reduceByKey((a, b) => a + b).sortBy(_._2)

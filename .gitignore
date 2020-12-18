@@ -27,3 +27,5 @@ hs_err_pid*
 .idea/workspace.xml
 out/production/Spark-MLlib-Tutorial/META-INF/
 out/production/Spark-MLlib-Tutorial/generated/
+src/test/
+target/
